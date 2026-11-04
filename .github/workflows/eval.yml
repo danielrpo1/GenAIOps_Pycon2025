@@ -2,6 +2,13 @@ name: Evaluación RAG
 
 on:
   push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'tests/**'
+      - '.github/workflows/eval.yml'
+  pull_request:
+    branches: [main]
     paths:
       - 'app/**'
       - 'tests/**'
@@ -51,6 +58,7 @@ jobs:
       env:
         LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'openai' }}
         EVAL_MODEL: ${{ vars.EVAL_MODEL }}
+        EVAL_SCORERS: ${{ vars.EVAL_SCORERS }}
         PROMPT_VERSION: ${{ vars.PROMPT_VERSION }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -60,6 +68,9 @@ jobs:
         python app/run_eval.py
 
     - name: Quality gate (umbrales mínimos)
+      env:
+        MIN_CORRECTNESS: ${{ vars.MIN_CORRECTNESS || '0.8' }}
+        MIN_SAFETY: ${{ vars.MIN_SAFETY || '1.0' }}
       run: pytest tests/test_run_eval.py -v
 
     - name: Guardar resultados de MLflow

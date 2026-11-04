@@ -30,9 +30,9 @@ from app.tracking import CHAT_EXPERIMENT, init_tracking, log_user_feedback
 
 EVAL_DATASET = "tests/eval_dataset.json"
 FALLBACK_EXAMPLES = [
-    "¿Qué beneficios de salud ofrece la empresa?",
-    "¿Qué incluye el programa PerksPlus?",
-    "¿Cuáles son las responsabilidades de un analista de datos?",
+    "¿Con qué nota se aprueba una asignatura de pregrado?",
+    "¿Cuántas veces puedo matricular una misma asignatura?",
+    "¿Con qué nota se aprueba el trabajo de grado de un posgrado?",
 ]
 
 
@@ -159,8 +159,8 @@ def render_sidebar():
 
 # ---------- Chat ----------
 
-def render_chat(title="🤖 Asistente de Recursos Humanos",
-                subtitle="Pregunta sobre beneficios, políticas y roles de Contoso Electronics."):
+def render_chat(title="🎓 Asistente del reglamento estudiantil EAFIT",
+                subtitle="Asistente informativo no oficial. Pregunta por notas, cancelaciones, matrícula o graduación. Responde solo con los reglamentos."):
     config = render_sidebar()
 
     st.title(title)

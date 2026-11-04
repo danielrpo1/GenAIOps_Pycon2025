@@ -1,5 +1,6 @@
 # Entornos
 .env
+.cache/
 __pycache__/
 *.pyc
 *.pyo
@@ -17,6 +18,7 @@ vectorstore/
 
 # Python virtual environments
 venv/
+.venv/
 .envrc
 
 # DVC cache (si se usa)
