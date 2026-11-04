@@ -37,7 +37,7 @@ from mlflow.genai.scorers import (
 
 from app.llm_provider import describe, get_judge_model_uri
 from app.prompt_registry import DEFAULT_PROMPT
-from app.rag_pipeline import build_chain, load_vectorstore_from_disk
+from app.rag_pipeline import build_chain, etiquetar_fuente_activo, load_vectorstore_from_disk
 from app.tracking import EVAL_EXPERIMENT, app_config, init_tracking
 
 load_dotenv()
@@ -169,7 +169,9 @@ def main():
         result = chain.invoke({"question": question, "chat_history": []})
         return result["answer"]
 
-    run_name = f"{describe()['llm_provider']}|{prompt_uri.replace('prompts:/', '')}|k{K}|c{CHUNK_SIZE}"
+    run_name = (f"{describe()['llm_provider']}|{prompt_uri.replace('prompts:/', '')}|k{K}|c{CHUNK_SIZE}"
+                f"|juez-{judge_model.split('/')[-1]}"
+                f"{'|fuente' if etiquetar_fuente_activo() else ''}|ds{os.getenv('DATASET_VERSION', '1')}")
     with mlflow.start_run(run_name=run_name):
         mlflow.log_params({
             **app_config(prompt_uri, K),
@@ -177,6 +179,8 @@ def main():
             "chunk_overlap": CHUNK_OVERLAP,
             "judge_model": judge_model,
             "dataset": DATASET_PATH,
+            "dataset_version": os.getenv("DATASET_VERSION", "1"),
+            "etiquetar_fuente": str(etiquetar_fuente_activo()),
         })
         results = mlflow.genai.evaluate(
             data=load_eval_dataset(),

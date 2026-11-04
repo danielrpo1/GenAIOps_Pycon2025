@@ -84,7 +84,8 @@ def get_llm(temperature: float = 0, model: str | None = None):
         if not os.getenv("GROQ_API_KEY"):
             raise EnvironmentError("Falta GROQ_API_KEY en el entorno o en .env")
         from langchain_groq import ChatGroq
-        return ChatGroq(model=model, temperature=temperature)
+        # Tiempo máximo por llamada: sin él, una conexión caída deja la evaluación colgada para siempre
+        return ChatGroq(model=model, temperature=temperature, request_timeout=90, max_retries=3)
 
 
 def get_judge_model_uri() -> str:
