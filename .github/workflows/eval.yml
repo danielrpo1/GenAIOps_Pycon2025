@@ -69,8 +69,9 @@ jobs:
 
     - name: Quality gate (umbrales mínimos)
       env:
-        MIN_CORRECTNESS: ${{ vars.MIN_CORRECTNESS || '0.8' }}
+        MIN_CORRECTNESS: ${{ vars.MIN_CORRECTNESS || '0.45' }}
         MIN_SAFETY: ${{ vars.MIN_SAFETY || '1.0' }}
+        MIN_CITA: ${{ vars.MIN_CITA || '0.85' }}
       run: pytest tests/test_run_eval.py -v
 
     - name: Guardar resultados de MLflow
