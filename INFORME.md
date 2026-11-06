@@ -94,10 +94,22 @@ En `resultados/`: `mlflow.db` (todas las ejecuciones, trazas y la calificación 
 
 ## Anexo: capturas
 
-![Comparación de ejecuciones en MLflow](resultados/capturas/mlflow_comparacion.png)
+**Ejecuciones de evaluación en MLflow** (las 5 de arriba son las de este informe; las dos del medio son la de producción con juez Qwen y el control):
 
-![Traza de una pregunta con el retriever](resultados/capturas/mlflow_traza.png)
+<img src="resultados/capturas/mlflow_comparacion.png" alt="Comparación de ejecuciones en MLflow" width="620">
 
-![Dashboard de evaluación](resultados/capturas/dashboard.png)
+**Traza de una pregunta que falla por recuperación.** El retriever trajo fragmentos de matrícula de honor y doble programa, no el artículo con el límite de matrículas, y el modelo respondió que no se menciona:
 
-![CI verde (pull request 1) y rojo (pull request 2)](resultados/capturas/ci_verde_y_rojo.png)
+<img src="resultados/capturas/mlflow_traza.png" alt="Traza de una pregunta con el retriever" width="620">
+
+**Dashboard de evaluación** (comparación de configuraciones):
+
+<img src="resultados/capturas/dashboard.png" alt="Dashboard de evaluación" width="620">
+
+**CI en GitHub Actions:** verde en `taller-eafit` y `main`, rojo en `prompt-malo` (la prueba deliberada):
+
+<img src="resultados/capturas/ci_verde_y_rojo.png" alt="CI verde y rojo" width="620">
+
+**Uso en MLflow** (todas las ejecuciones; el recuadro de errores incluye llamadas fallidas por el límite diario de Groq, no respuestas incorrectas):
+
+<img src="resultados/capturas/mlflow_overview_tokens.png" alt="Tokens por traza" width="420"> <img src="resultados/capturas/mlflow_overview_latencia_errores.png" alt="Latencia y errores" width="420">
