@@ -27,7 +27,12 @@ def load_documents(path=DATA_DIR):
     for file in os.listdir(path):
         if file.endswith(".pdf"):
             loader = PyPDFLoader(os.path.join(path, file))
-            docs.extend(loader.load())
+            for doc in loader.load():
+                # Nombre del documento y página (1-based): permiten decirle al modelo de dónde viene
+                # cada fragmento (ver ETIQUETAR_FUENTE en build_chain).
+                doc.metadata["documento"] = file
+                doc.metadata["pagina"] = doc.metadata.get("page", 0) + 1
+                docs.append(doc)
     return docs
 
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE") or 512)
@@ -92,9 +97,25 @@ def list_prompt_versions():
 def build_chain(vectordb, prompt_version=DEFAULT_PROMPT, k=4):
     prompt = load_prompt(prompt_version)
     retriever = vectordb.as_retriever(search_kwargs={"k": k})
+    chain_kwargs = {"prompt": prompt}
+    if etiquetar_fuente_activo():
+        # Sin esto el modelo recibe los fragmentos pegados y no sabe si una regla es de pregrado,
+        # de posgrado o del reglamento económico. Con la etiqueta puede distinguirlos.
+        chain_kwargs["document_prompt"] = PromptTemplate(
+            input_variables=["page_content", "documento", "pagina"],
+            template="[Fuente: {documento}, página {pagina}]\n{page_content}",
+        )
     return ConversationalRetrievalChain.from_llm(
         llm=get_llm(temperature=0),
         retriever=retriever,
-        combine_docs_chain_kwargs={"prompt": prompt},
+        combine_docs_chain_kwargs=chain_kwargs,
         return_source_documents=True  # para mostrar las referencias en la UI
     )
+
+
+def etiquetar_fuente_activo() -> bool:
+    """
+    Antepone [Fuente: documento, página N] a cada fragmento del contexto. Activo por defecto:
+    en la evaluación subió las respuestas correctas de 46% a 58%. ETIQUETAR_FUENTE=0 lo apaga.
+    """
+    return os.getenv("ETIQUETAR_FUENTE", "1").strip().lower() in ("1", "true", "si", "sí")

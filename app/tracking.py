@@ -16,12 +16,19 @@ Por defecto MLflow guarda todo en ./mlflow.db (SQLite). Para verlo:
 import os
 import re
 
+# Algunos equipos (por ejemplo, los corporativos) definen variables OTEL_* de OpenTelemetry que
+# apuntan a un colector de la empresa. Con ellas puestas MLflow deja de guardar las trazas en
+# mlflow.db (quedan como "NoOp") y las intenta enviar a ese colector. Para este proyecto las
+# trazas deben quedar solo en el MLflow local, así que se ignoran dentro de este proceso.
+for _variable in [k for k in os.environ if k.startswith("OTEL_")]:
+    os.environ.pop(_variable, None)
+
 import mlflow
 from mlflow.entities import AssessmentSource, AssessmentSourceType
 
 from app.llm_provider import describe
 
-CHAT_EXPERIMENT = "chatbot_rrhh"
+CHAT_EXPERIMENT = "chatbot_eafit"
 EVAL_EXPERIMENT = "rag_evaluation"
 
 _autolog_enabled = False
@@ -41,7 +48,7 @@ def app_config(prompt_uri: str, k: int) -> dict:
 
 
 def _prompt_label(prompt_uri: str) -> str:
-    """prompts:/asistente_rrhh/2 → asistente_rrhh-v2 ; app/prompts/v1_x.txt → local-v1_x"""
+    """prompts:/asistente_eafit/2 → asistente_eafit-v2 ; app/prompts/v1_x.txt → local-v1_x"""
     if prompt_uri.startswith("prompts:/"):
         return prompt_uri.replace("prompts:/", "").replace("/", "-v")
     return "local-" + os.path.splitext(os.path.basename(prompt_uri))[0]
