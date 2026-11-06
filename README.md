@@ -1,5 +1,7 @@
 # 🎓 Chatbot GenAI — Asistente del reglamento estudiantil de EAFIT
 
+> 📄 **Resultados y diagnóstico del taller:** ver [`INFORME.md`](INFORME.md). Evidencia (MLflow, calificación humana, figuras) en [`resultados/`](resultados/).
+
 Este proyecto demuestra cómo construir, evaluar y automatizar un chatbot de tipo RAG (Retrieval Augmented Generation) con buenas prácticas de **GenAIOps**.
 
 **¿Primera vez aquí?** Sigue el [🧭 Recorrido guiado](#-recorrido-guiado-empieza-aquí): en unos 60–90 minutos recorres el repositorio de punta a punta.
